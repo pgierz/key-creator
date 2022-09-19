@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d3a0497e0e9504b00ecce24c737ba7ad3797a6962649798cfbaa90755017319d"
+            "sha256": "91641fe6368356db08f12fac5dc40a3927dc0e1fe8a861fc69d32d9239ef6626"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -172,10 +172,6 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==3.1.2"
-        },
-        "key-creator": {
-            "editable": true,
-            "path": "."
         },
         "markupsafe": {
             "hashes": [
@@ -452,10 +448,6 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==3.1.2"
-        },
-        "key-creator": {
-            "editable": true,
-            "path": "."
         },
         "markupsafe": {
             "hashes": [

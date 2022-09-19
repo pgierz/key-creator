@@ -2,7 +2,6 @@
 flask = "*"
 invoke = "*"
 paramiko = "*"
-key_creator = {editable = true, path = "."}
 
 [dev-packages]
 invoke = '*'
@@ -14,7 +13,6 @@ pytest-xdist = '*'
 pytest-cov = '*'
 sphinx = '*'
 sphinx-rtd-theme = '*'
-key-creator = {path = "."}
 
 [scripts]
 release = 'inv release'
