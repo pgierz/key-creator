@@ -14,3 +14,4 @@ Submodules
 
    key_creator.app
    key_creator.tasks
+   key_creator.upload_keypair
