@@ -1,7 +1,8 @@
 [packages]
 flask = "*"
 invoke = "*"
-key_creator = {path = "."}
+paramiko = "*"
+key_creator = {editable = true, path = "."}
 
 [dev-packages]
 invoke = '*'

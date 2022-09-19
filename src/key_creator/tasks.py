@@ -1,31 +1,64 @@
+#!/usr/bin/env python3
+"""
+Basic tasks for generating a keypair, signing that keypair with a certificate,
+and uploading the relevant keys to the login nodes of AWI's HPC system.
+
+Provides the following functions and invoke CLI commands:
+    * ``generate_keypair`` as a function (or ``generate-keypair`` as a CLI command)
+    * ``sign_keypair_with_ca`` as a function (or ``sign-keypair-with-ca`` as a CLI command)
+    * ``upload_keypair_to_login_node`` as a function (or ``upload-keypair-to-login-node`` as a CLI command)
+
+For the command line version, you may use::
+    
+    $ inv <COMMAND>
+
+Where ``<COMMAND>`` is one of the three commands given above. See the function
+documentation for further information on each command.
+"""
 from invoke import task, Responder
+
+from key_creator.upload_keypair import deploy_key
 
 import os
 
+@task
+def generate_keypair(c, key_suffix="jupyterhub_hpc"):
+    """
+    Creates a Private/Public ssh keypair for use with the AWI HPC Jupyterhub
+
+    Parameters
+    ----------
+    key_suffix : str
+        A suffix which can be appended to the key to keep it unique from the
+        default `ssh-keygen` name of `id_rsa`. If no argument is supplied,
+        defaults to `jupyterhub_hpc`
+    """
+    c.run(
+        f"ssh-keygen -t rsa -f {os.environ['HOME']}/.ssh/id_rsa_{key_suffix} -q -N ''"
+    )
+
 
 @task
-def generate_keypair(c):
+def sign_keypair_with_ca(c, key_suffix="jupyterhub_hpc"):
+    """
+    Signs the Private/Public ssh keypair with the certificate authority (ca)
+    maintained at paleosrv3.dmawi.de as an extra layer of security.
+
+    Parameters
+    ----------
+    key_suffix : str
+        A suffix which can be appended to the key to keep it unique from the
+        default `ssh-keygen` name of `id_rsa`. If no argument is supplied,
+        defaults to `jupyterhub_hpc`
+    """
     c.run(
-        f"ssh-keygen -t rsa -f {os.environ['HOME']}/.ssh/id_rsa_jupyterhub_hpc -q -N ''"
+        f"ssh-keygen -s /etc/ssh/ca -I {os.environ['USER']}@ollie0.awi.de -n {os.environ['USER']} {os.environ['HOME']}/.ssh/id_rsa_{key_suffix}.pub"
     )
 
 
-@task
-def sign_keypair_with_ca(c):
-    c.run(
-        f"ssh-keygen -s /etc/ssh/ca -I {os.environ['USER']}@ollie0.awi.de -n {os.environ['USER']} {os.environ['HOME']}/.ssh/id_rsa_jupyterhub_hpc.pub"
-    )
-
-
-@task
-def upload_keypair_to_login_node(c, password):
-    responder = Responder(
-        pattern=f"{os.environ['USER']}@ollie0.awi.de's password: ",
-        response=f"{password}\n",
-    )
-    c.run(
-        f"ssh-copy-id -i {os.environ['HOME']}/.ssh/id_rsa_jupyterhub_hpc {os.environ['USER']}@ollie0.awi.de",
-        watchers=[
-            responder,
-        ],
-    )
+# FIXME(PG): I do not like that I need to pass the password as a plain text
+# command flag. This should be different...
+@task(help={"password": "Your password for the AWI's HPC Login Nodes"})
+def upload_keypair_to_login_node(c, password=None):
+    key = open(f"{os.environ['HOME']}/.ssh/id_rsa_jupyterhub_hpc.pub").read()
+    deploy_key(key, "ollie0.awi.de", os.environ["USER"], password)
