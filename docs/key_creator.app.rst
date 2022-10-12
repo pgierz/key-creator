@@ -6,5 +6,5 @@ key\_creator.app module
    :undoc-members:
    :show-inheritance:
 
-.. autoflask:: key_creator:app
+.. autoflask:: key_creator.app:app
    :endpoints:
