@@ -2,16 +2,10 @@
 """
 A small Flask app to generate SSH Keys via REST API requests
 
-The following routes are available, sorted by HTTP request method:
-    * ``GET``:
-        * ``/``: Checks if the server is online and lists all possible routes
-        * ``/generate_keypair``: Creates a public and private SSH key for AWI's
-          HPC Jupyerhub
-        * ``/sign_keypair``: Signs the keypair with the SSH Certificate
-          Authority maintained at Paleosrv3.dmawi.de
-    * ``POST``:
-        * ``/upload_keypair``: Body of the HTTP Request should contain your
-          login password. Keys are then uploaded to the AWI HPC system.
+.. qrefflask:: key_creator.app:app
+
+.. autoflask:: key_creator.app:app
+   :endpoints:
 """
 from . import tasks
 import os
